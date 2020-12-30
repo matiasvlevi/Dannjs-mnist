@@ -1,1 +1,1 @@
-# Dann_mnist
+# Dann mnist trainer (Nodejs)
