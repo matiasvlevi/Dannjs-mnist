@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/matiasvlevi/Dann_mnist#readme",
   "dependencies": {
-    "dannjs": "^2.1.7-c"
+    "dannjs": "^2.1.7-e",
+    "mnist": "^1.1.0"
   }
 }
