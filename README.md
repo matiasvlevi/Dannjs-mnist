@@ -10,6 +10,6 @@
 * launch the run.bat shortcut.
 * Play around! Have fun! Feel free to change settings and see what type of configuration works best.
 
-### library website:
+### library info:
 
 <a href="https://dannjs.org"><img src="https://img.shields.io/badge/Dannjs-website-10?style=%22social%22"/></a> ![GitHub Repo stars](https://img.shields.io/github/stars/matiasvlevi/dann?label=Stars&style=social) ![npm](https://img.shields.io/npm/dt/dannjs?style=social)
