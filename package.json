@@ -1,23 +1,16 @@
 {
-  "name": "dann_mnist_trainer",
+  "name": "mnist_test",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/matiasvlevi/Dann_mnist.git"
-  },
-  "author": "Matias Vazquez-Levi",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/matiasvlevi/Dann_mnist/issues"
-  },
-  "homepage": "https://github.com/matiasvlevi/Dann_mnist#readme",
   "dependencies": {
-    "dannjs": "^2.1.7-e",
-    "mnist": "^1.1.0"
+    "dannjs": "^2.1.9-d",
+    "fs": "0.0.1-security",
+    "mnist-data": "^1.2.6"
   }
 }
