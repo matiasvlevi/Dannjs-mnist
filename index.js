@@ -57,20 +57,23 @@ let Matrix = dannjs.matrix;
 let activations = dannjs.activations;
 let pickFuncs = dannjs.pickFuncs;
 
-let name = 'samplec_v2_1_9';
+let name = 'sampleA';
 //Creating a pooling layer to downsample (784 to 196):
 let dsl = new Layer('avgpool',784,2,2);
 //Creating the Deep Neural Network:
 let nn = new Dann(196,11);
-// nn.addHiddenLayer(121,'leakyReLU');
-// nn.addHiddenLayer(81,'leakyReLU');
-// nn.addHiddenLayer(49,'leakyReLU');
-// nn.setLossFunction('bce');
-// nn.makeWeights(-0.1,0.1);
-nn.load('sampleB_v2_1_9');
+nn.addHiddenLayer(169,'leakyReLU');
+nn.addHiddenLayer(121,'leakyReLU');
+nn.addHiddenLayer(64,'leakyReLU');
+nn.addHiddenLayer(36,'leakyReLU');
+nn.setLossFunction('bce');
+nn.makeWeights(-0.1,0.1);
+// nn.load('sample');
 
 nn.lr = 0.000001;
 nn.log();
+
+let epoch = 100;
 
 function findLargest(arr) {
     let record = 0;
@@ -151,7 +154,7 @@ function test_() {
     return points/len;
 }
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < epoch; i++) {
     train_(100,1);
     nn.save(name,test_);
 }
