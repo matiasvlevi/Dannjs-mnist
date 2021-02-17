@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dannjs": "^2.1.9-d",
-    "fs": "0.0.1-security",
-    "mnist-data": "^1.2.6"
+    "easy-mnist": "^1.0.1",
+    "fs": "0.0.1-security"
   }
 }

@@ -68,8 +68,6 @@ nn.addHiddenLayer(64,'leakyReLU');
 nn.addHiddenLayer(36,'leakyReLU');
 nn.setLossFunction('bce');
 nn.makeWeights(-0.1,0.1);
-// nn.load('sample');
-
 nn.lr = 0.000001;
 nn.log();
 
@@ -156,5 +154,4 @@ function test_() {
 
 for (let i = 0; i < epoch; i++) {
     train_(100,1);
-    nn.save(name,test_);
 }
