@@ -1,100 +1,28 @@
-const fs = require('fs');
+const func = require('./func.js');
+const dataset = require('easy-mnist').makeData(60000,10000);
 
-const mnist = require('mnist-data');
-const test = mnist.testing(0,10000);
-const train = mnist.training(0,60000);
+const dn = require('dannjs');
+const Dann = dn.dann;
+const Layer = dn.layer;
 
-let trainlabels = [];
-let testlabels = [];
-let trainImgs = [];
-let testImgs = [];
-function map(x,a,b,c,d) {
-    return (x-a)/(b-a)* (d-c) + c;
-}
-function format(arr) {
-    let newArr = [];
-    for (let i = 0; i < arr.length; i++) {
-        newArr[i] = map(arr[i],0,255,0,1);
-    }
-    return newArr;
-}
-function merge(arr) {
-    let array = [];
-    for (let i = 0; i < arr.length; i++) {
-        let o = array.concat(format(arr[i]));
-        array = o;
-    }
-    return array;
-}
-function makeLabel(x,l) {
-    let arr = [];
-    for (let i = 0; i < l; i++) {
-        if (i == x) {
-            arr[i] = 1;
-        } else {
-            arr[i] = 0;
-        }
-    }
-    return arr;
-}
+let epoch = 10;
 
-for (let i = 0; i < 60000; i++) {
-    trainlabels[i] = makeLabel(train.labels.values[i],10);
-    trainImgs[i] = merge(train.images.values[i]);
-}
-for (let i = 0; i < 10000; i++) {
-    testlabels[i] = makeLabel(test.labels.values[i],10);
-    testImgs[i] = merge(test.images.values[i]);
-}
-
-console.log("Test data: "+test.labels.values.length);
-console.log("Train data: "+train.images.values.length);
-
-let dannjs = require('dannjs');
-let Dann = dannjs.dann;
-let Layer = dannjs.layer;
-let Matrix = dannjs.matrix;
-let activations = dannjs.activations;
-let pickFuncs = dannjs.pickFuncs;
-
-let name = 'sampleA';
 //Creating a pooling layer to downsample (784 to 196):
 let dsl = new Layer('avgpool',784,2,2);
+
 //Creating the Deep Neural Network:
 let nn = new Dann(196,11);
 nn.addHiddenLayer(169,'leakyReLU');
-nn.addHiddenLayer(121,'leakyReLU');
-nn.addHiddenLayer(64,'leakyReLU');
+nn.addHiddenLayer(81,'leakyReLU');
 nn.addHiddenLayer(36,'leakyReLU');
 nn.setLossFunction('bce');
-nn.makeWeights(-0.1,0.1);
-nn.lr = 0.000001;
+nn.makeWeights(-0.5,0.5);
+nn.lr = 0.000005;
 nn.log();
-
-let epoch = 100;
-
-function findLargest(arr) {
-    let record = 0;
-    let bestIndex = 0;
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i] > record) {
-            record = arr[i];
-            bestIndex = i;
-        }
-    }
-    return bestIndex;
-}
-function makeEmpty(num) {
-    let arr = [];
-    for (let i = 0; i < num; i++) {
-        arr[i] = 0;
-    }
-    return arr;
-}
 
 //train & test :
 function train_(batchPerEpoch,epoch) {
-    let len = train.labels.values.length;
+    let len = dataset.traindata.length;
     for(let e = 0; e < epoch; e++) {
         console.log("Start Epoch: "+nn.epoch);
         let sum = 0;
@@ -103,49 +31,42 @@ function train_(batchPerEpoch,epoch) {
             let bsum = 0;
             for (let k = 0; k < batchlength; k++) {
                 let index = (j*batchlength)+k;
-                let input = trainImgs[index];
-                let downsampled = dsl.feed(input);
-                let target = trainlabels[index];
+                //Downsampling 28x28 image to 14x14
+                let downsampled = dsl.feed(dataset.traindata[index].image);
+                //Adding one more value to the target array to allow for the model to recognise 'blank' images.
+                let target = dataset.traindata[index].label;
                 target[10] = 0;
-                //console.log(downsampled.length,nn.i)
                 nn.backpropagate(downsampled,target);
-
                 bsum += nn.loss;
             }
-            for (let i = 0; i < batchlength/10; i++) {
-
-                let downsampled = makeEmpty(196);
+            //Training to allow for the model to recognise 'blank' images.
+            for (let i = 0; i < batchlength/20; i++) {
+                let downsampled = func.makeEmpty(196);
                 let target = [0,0,0,0,0,0,0,0,0,0,1];
                 nn.backpropagate(downsampled,target);
-
             }
-            //nn.losses.push(bsum);
             sum += bsum;
             let bavgLoss = bsum/batchlength;
             console.log("Batch: "+j+" AvgLoss: "+bavgLoss);
         }
-
         let avgloss = sum/len;
+        //Testing model's accuracy
         let result = test_();
         console.log("  ");
         console.log("Completed Epoch: "+nn.epoch+ "  Accuracy: "+result+" AvgLoss: "+avgloss);
         console.log("  ");
         nn.epoch++;
     }
-
 }
 function test_() {
     let points = 0;
-    let len = testlabels.length;
+    let len = dataset.testdata.length;
     for (let i = 0; i < len; i++) {
-        let downsampled = dsl.feed(testImgs[i]);
-        let target = testlabels[i];
-        target[10] = 0;
-        let out = nn.feedForward(downsampled,target);
-        let predictedLabel = findLargest(out);
-        let realLabel = test.labels.values[i];
-
-        if (predictedLabel == realLabel) {
+        //Downsampling 28x28 image to 14x14
+        let downsampled = dsl.feed(dataset.testdata[i].image);
+        //finding the largest values of the model's output predictions.
+        let output = nn.feedForward(downsampled);
+        if (func.findLargest(output) == dataset.testdata[i].label.indexOf(1)) {
             points++;
         }
     }
@@ -154,4 +75,5 @@ function test_() {
 
 for (let i = 0; i < epoch; i++) {
     train_(100,1);
+    nn.save('trainedMnistModel');
 }
