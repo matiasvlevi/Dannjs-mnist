@@ -1,3 +1,4 @@
 @echo off
-node index.js
+:: Train 10 epochs
+node index.js 10
 pause
