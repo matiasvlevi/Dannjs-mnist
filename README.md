@@ -13,6 +13,8 @@ or run :
 ```
 node index.js [epoch]
 ```
+to specify a number of epochs to train.
+
 * Play around! Have fun! Feel free to change settings and see what type of configuration works best.
 
 ### library info:
