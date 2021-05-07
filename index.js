@@ -5,7 +5,7 @@ const dn = require('dannjs');
 const Dann = dn.dann;
 const Layer = dn.layer;
 
-let epoch = 10;
+let epoch = JSON.parse(process.argv[2]);
 
 //Creating a pooling layer to downsample (784 to 196):
 let dsl = new Layer('avgpool',784,2,2);
