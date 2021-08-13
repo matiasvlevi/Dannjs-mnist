@@ -1,4 +1,4 @@
-# Mnist Trainer
+# Dannjs MNIST Trainer
 
    This is a Dannjs example meant to showcase the core functionalities of Dannjs.
 
